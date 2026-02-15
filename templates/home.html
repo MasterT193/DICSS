@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ current_user.username }}!</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="flash {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Root</a>
+            {% for name, id in ancestors %}
+                <span> / </span>
+                <a href="{{ url_for('home', folder_id=id) }}">{{ name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- Folder Creation Form -->
+        <form class="folder-form" method="POST" action="{{ url_for('create_folder') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="parent_id" value="{{ folder_id if folder_id else '' }}">
+            <input type="text" name="name" placeholder="New Folder Name" required>
+            <button type="submit"><i class="fas fa-folder-plus"></i> Create Folder</button>
+        </form>
+
+        <!-- File Upload Form -->
+        <form class="upload-form" method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="folder_id" value="{{ folder_id if folder_id else '' }}">
+            <label for="file-upload" class="sr-only">Upload Files</label>
+            <input type="file" id="file-upload" name="file" multiple required aria-label="Select files to upload">
+            <button type="submit"><i class="fas fa-upload"></i> Upload Files</button>
+        </form>
+
+        <!-- Bulk Actions -->
+        <div class="bulk-actions">
+            <form action="{{ url_for('bulk_download') }}" id="bulkDownloadForm" method="GET">
+                <button type="submit" id="bulkDownloadButton" disabled><i class="fas fa-download"></i> Download Selected</button>
+            </form>
+            <form action="{{ url_for('bulk_delete') }}" id="bulkDeleteForm" method="GET">
+                <button type="submit" id="bulkDeleteButton" disabled><i class="fas fa-trash"></i> Delete Selected</button>
+            </form>
+        </div>
+
+        <!-- List of Folders -->
+        <h2>Your Folders</h2>
+        {% if folders|length > 0 %}
+            <ul class="folder-list">
+                {% for folder in folders %}
+                    <li>
+                        <i class="fas fa-folder folder-icon"></i>
+                        <div class="file-details">
+                            <a href="{{ url_for('home', folder_id=folder.id) }}"><strong>{{ folder.name }}</strong></a>
+                        </div>
+                        <div class="file-actions">
+                            <a href="{{ url_for('delete_folder_route', folder_id=folder.id) }}" class="delete-button" onclick="return confirm('Delete folder and all contents?')"><i class="fas fa-trash"></i> Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <ul class="folder-list">
+                <li>No folders created yet.</li>
+            </ul>
+        {% endif %}
+
+        <!-- List of Files -->
+        <h2>Your Files</h2>
+        {% if files|length > 0 %}
+            <div class="select-all">
+                <label for="select-all">Select All Files</label>
+                <input type="checkbox" id="select-all" aria-label="Select all files">
+            </div>
+            <ul class="file-list">
+                {% for file in files %}
+                    <li>
+                        <input type="checkbox" name="file_ids" value="{{ file.id }}" class="file-checkbox" id="file-{{ file.id }}" aria-label="Select {{ file.filename }}">
+                        <i class="fas fa-file file-icon"></i>
+                        <div class="file-details">
+                            <strong>{{ file.filename }}</strong>
+                            <br>
+                            <small>Type: {{ file.filename.split('.')[-1] | upper }}</small>
+                        </div>
+                        <div class="file-actions">
+                            <a href="{{ url_for('download', file_id=file.id) }}" class="download-button"><i class="fas fa-download"></i> Download</a>
+                            <a href="{{ url_for('delete', file_id=file.id) }}" class="delete-button"><i class="fas fa-trash"></i> Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <ul class="file-list">
+                <li>No files uploaded yet.</li>
+            </ul>
+        {% endif %}
+
+        <!-- Navigation Links -->
+        <div class="navigation-links">
+            <a href="{{ url_for('activity') }}"><i class="fas fa-history"></i> View Activity Log</a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <script>
+        const bulkDownloadButton = document.getElementById('bulkDownloadButton');
+        const bulkDeleteButton = document.getElementById('bulkDeleteButton');
+        const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+        const selectAllCheckbox = document.getElementById('select-all');
+
+        function updateButtonStates() {
+            const selectedFiles = document.querySelectorAll('.file-checkbox:checked');
+            bulkDownloadButton.disabled = selectedFiles.length === 0;
+            bulkDeleteButton.disabled = selectedFiles.length === 0;
+        }
+
+        fileCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateButtonStates();
+                const allChecked = Array.from(fileCheckboxes).every(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+            });
+        });
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', () => {
+                const isChecked = selectAllCheckbox.checked;
+                fileCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateButtonStates();
+            });
+        }
+
+        document.getElementById('bulkDownloadForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const selectedFiles = document.querySelectorAll('.file-checkbox:checked');
+            const fileIds = Array.from(selectedFiles).map(checkbox => checkbox.value);
+            if (fileIds.length > 0) {
+                window.location.href = `{{ url_for('bulk_download') }}?file_ids=${fileIds.join(',')}`;
+            }
+        });
+
+        document.getElementById('bulkDeleteForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const selectedFiles = document.querySelectorAll('.file-checkbox:checked');
+            const fileIds = Array.from(selectedFiles).map(checkbox => checkbox.value);
+            if (fileIds.length > 0 && confirm('Are you sure you want to delete the selected files?')) {
+                window.location.href = `{{ url_for('bulk_delete') }}?file_ids=${fileIds.join(',')}`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@300;400;500&display=swap');
+
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f7f9fc 0%, #e8ecef 100%);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-4px);
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #4A90E2;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    color: #333;
+    margin: 1.5rem 0 1rem;
+}
+
+/* Flash Messages */
+.flashes {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.flashes li.flash {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.flashes li.flash.success {
+    background: #e6f4ea;
+    color: #2e7d32;
+    border-left: 4px solid #50C878;
+}
+
+.flashes li.flash.success::before {
+    content: '\f058'; /* Font Awesome check-circle */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 0.5rem;
+}
+
+.flashes li.flash.error {
+    background: #fce4e4;
+    color: #c62828;
+    border-left: 4px solid #FF6B6B;
+}
+
+.flashes li.flash.error::before {
+    content: '\f057'; /* Font Awesome times-circle */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 0.5rem;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+.flash {
+    padding: 10px;
+    border-radius: 5px;
+}
+.flash.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.flash.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input[type="text"], input[type="password"], input[type="file"] {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    outline: none;
+}
+
+.upload-form, .folder-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.upload-form button, .folder-form button, button[type="submit"] {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(90deg, #4A90E2, #50C878);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-form button:hover, .folder-form button:hover, button[type="submit"]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Bulk Actions */
+.bulk-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.bulk-actions button {
+    padding: 0.75rem 1.5rem;
+    background: #4A90E2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.bulk-actions button:hover {
+    background: #357ABD;
+    transform: scale(1.05);
+}
+
+.bulk-actions button:disabled {
+    background: #b0bec5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* File and Folder List */
+.file-list, .folder-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li, .folder-list li {
+    background: #f9fbfc;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.file-list li:hover, .folder-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.file-list li:last-child, .folder-list li:last-child {
+    margin-bottom: 0;
+}
+
+.file-list .file-icon, .folder-list .folder-icon {
+    font-size: 1.5rem;
+    color: #4A90E2;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-details strong {
+    font-weight: 500;
+    color: #333;
+}
+
+.file-details small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.download-button, .delete-button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.download-button {
+    background: #50C878;
+    color: #fff;
+}
+
+.download-button:hover {
+    background: #43A047;
+    transform: scale(1.05);
+}
+
+.delete-button {
+    background: #FF6B6B;
+    color: #fff;
+}
+
+.delete-button:hover {
+    background: #D32F2F;
+    transform: scale(1.05);
+}
+
+/* Activity List */
+.activity-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.activity-list li {
+    background: #f9fbfc;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.activity-list li::before {
+    content: '\f017'; /* Font Awesome clock */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #4A90E2;
+}
+
+.activity-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Navigation Links */
+.navigation-links {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.navigation-links a {
+    color: #4A90E2;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navigation-links a:hover {
+    color: #357ABD;
+    transform: translateY(-2px);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: #4A90E2;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: #666;
+}
+
+/* Screen Reader Only (sr-only) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .upload-form, .folder-form {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .bulk-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .file-list li, .folder-list li, .activity-list li {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .file-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .download-button, .delete-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .navigation-links {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}

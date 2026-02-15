@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.log
+
+.git/
+.venv/
+
+# Local app data
+*.db
+uploads/
+instance/
+
+.vscode/

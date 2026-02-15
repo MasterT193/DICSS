@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Activity Log</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="flash {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Activity List -->
+        {% if activities|length > 0 %}
+            <ul class="activity-list">
+                {% for activity in activities %}
+                    <li>
+                        {{ activity.timestamp.strftime('%Y-%m-d %H:%M:%S') }} - 
+                        {{ activity.action | capitalize }}: 
+                        {{ activity.details or 'No additional details' }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <ul class="activity-list">
+                <li>No activity recorded yet.</li>
+            </ul>
+        {% endif %}
+
+        <!-- Navigation Links -->
+        <div class="navigation-links">
+            <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Back to Home</a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</body>
+</html>
